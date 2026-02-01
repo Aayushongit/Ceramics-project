@@ -2,6 +2,14 @@
 
 Interactive 3D visualization of FCC (Face-Centered Cubic) and HCP (Hexagonal Close-Packed) crystal structures with interstitial voids.
 
+## Screenshots
+
+### FCC vs HCP Comparison
+![FCC vs HCP Comparison](assets/fcc_hcp_comparison.png)
+
+### FCC Unit Cell with Voids
+![FCC Unit Cell](assets/fcc_unit_cell.png)
+
 ## Project Structure
 
 ```
