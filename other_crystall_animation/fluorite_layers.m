@@ -4,7 +4,7 @@ fprintf('\n FLUORITE (CaF2) Layer Stacking Simulation\n');
 fprintf(' Building FCC Ca layers with F in ALL tetrahedral voids\n\n');
 
 a = 1;
-nx = 3; ny = 3; nz = 2;
+nx = 3; ny = 3; nz = 1;
 
 ca_color = [0.25 0.48 0.92];
 f_color = [0.92 0.35 0.35];

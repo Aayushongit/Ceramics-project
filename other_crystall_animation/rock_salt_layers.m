@@ -4,7 +4,7 @@ fprintf('\n ROCK SALT (NaCl) Layer Stacking Simulation\n');
 fprintf(' Building FCC Cl layers with Na in ALL octahedral voids\n\n');
 
 a = 1;
-nx = 3; ny = 3; nz = 2;
+nx = 3; ny = 3; nz = 1;
 
 cl_color = [0.92 0.72 0.20];
 na_color = [0.25 0.48 0.92];

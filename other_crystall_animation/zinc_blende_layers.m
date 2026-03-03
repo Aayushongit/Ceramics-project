@@ -4,7 +4,7 @@ fprintf('\n ZINC BLENDE (ZnS) Layer Stacking Simulation\n');
 fprintf(' Building FCC S layers with Zn in HALF of tetrahedral voids\n\n');
 
 a = 1;
-nx = 3; ny = 3; nz = 2;
+nx = 3; ny = 3; nz = 1;
 
 s_color = [0.92 0.72 0.20];
 zn_color = [0.25 0.48 0.92];

@@ -4,7 +4,7 @@ fprintf('\n ANTI-FLUORITE (Li2O) Layer Stacking Simulation\n');
 fprintf(' Building FCC O layers with Li in ALL tetrahedral voids\n\n');
 
 a = 1;
-nx = 3; ny = 3; nz = 2;
+nx = 3; ny = 3; nz = 1;
 
 o_color = [0.92 0.35 0.35];
 li_color = [0.25 0.48 0.92];

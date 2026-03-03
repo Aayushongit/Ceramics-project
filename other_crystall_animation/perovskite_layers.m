@@ -4,7 +4,7 @@ fprintf('\n PEROVSKITE (ABO3) Layer Stacking Simulation\n');
 fprintf(' Building: A at corners, B at body center, O at face centers\n\n');
 
 a = 1;
-nx = 3; ny = 3; nz = 2;
+nx = 3; ny = 3; nz = 1;
 
 a_color = [0.25 0.48 0.92];
 b_color = [0.65 0.25 0.85];

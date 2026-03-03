@@ -4,7 +4,7 @@ fprintf('\n SPINEL (AB2O4) Layer Stacking Simulation\n');
 fprintf(' Building: FCC O with A in 1/8 tet, B in 1/2 oct voids\n\n');
 
 a = 1;
-nx = 3; ny = 3; nz = 2;
+nx = 3; ny = 3; nz = 1;
 
 o_color = [0.92 0.35 0.35];
 a_color = [0.25 0.48 0.92];
