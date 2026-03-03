@@ -230,7 +230,7 @@ for L = 1:num_layers
 end
 
 title(ax_main, sprintf('%s | Layer stacking complete', cfg.name), 'Color', [0.9 0.95 1.0], 'FontSize', 14, 'FontWeight', 'bold');
-rotate_camera(ax_main, fig, 1.1);
+rotate_camera(ax_main, fig, 0.65);
 rotate3d(ax_main, 'on');
 
 end
@@ -367,7 +367,7 @@ for k = 1:numel(scales)
     aa = min(0.98, alpha * (0.65 + 0.35 * scales(k)));
     h = draw_spheres(ax, points, rr, color, aa, quality);
     drawnow;
-    pause(0.01);
+    pause(0.003);
     if k < numel(scales)
         delete([h{:}]);
     end

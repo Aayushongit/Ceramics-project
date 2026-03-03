@@ -21,9 +21,9 @@ cfg.info_lines = {
 cfg.a = 1;
 cfg.grid = [2 2 2];
 cfg.drop_height = 0.8;
-cfg.layer_steps = 7;
-cfg.void_steps = 4;
-cfg.layer_pause = 0.12;
+cfg.layer_steps = 5;
+cfg.void_steps = 3;
+cfg.layer_pause = 0.04;
 cfg.atom_quality = 13;
 cfg.void_quality = 9;
 
@@ -52,13 +52,13 @@ if ~isfield(cfg, 'void_quality')
     cfg.void_quality = 12;
 end
 if ~isfield(cfg, 'layer_steps')
-    cfg.layer_steps = 8;
+    cfg.layer_steps = 5;
 end
 if ~isfield(cfg, 'void_steps')
-    cfg.void_steps = 5;
+    cfg.void_steps = 3;
 end
 if ~isfield(cfg, 'layer_pause')
-    cfg.layer_pause = 0.12;
+    cfg.layer_pause = 0.04;
 end
 if ~isfield(cfg, 'drop_height')
     cfg.drop_height = 0.9 * cfg.a;
@@ -234,7 +234,7 @@ for L = 1:num_layers
 end
 
 title(ax_main, sprintf('%s | Layer stacking complete', cfg.name), 'Color', [0.9 0.95 1.0], 'FontSize', 14, 'FontWeight', 'bold');
-rotate_camera(ax_main, fig, 1.1);
+rotate_camera(ax_main, fig, 0.65);
 rotate3d(ax_main, 'on');
 
 end
@@ -356,7 +356,7 @@ for i = 1:size(points, 1)
         pos = start_pos + t * (end_pos - start_pos);
         h = draw_single_sphere(ax, pos, radius, color, alpha, quality);
         drawnow;
-        pause(0.006);
+        pause(0.002);
     end
 end
 end
@@ -371,7 +371,7 @@ for k = 1:numel(scales)
     aa = min(0.98, alpha * (0.65 + 0.35 * scales(k)));
     h = draw_spheres(ax, points, rr, color, aa, quality);
     drawnow;
-    pause(0.01);
+    pause(0.003);
     if k < numel(scales)
         delete([h{:}]);
     end
