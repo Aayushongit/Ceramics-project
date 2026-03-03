@@ -31,9 +31,10 @@ tet_void_positions = [a/4 a/4 a/4; 3*a/4 3*a/4 a/4; 3*a/4 a/4 3*a/4; a/4 3*a/4 3
                       3*a/4 a/4 a/4; a/4 3*a/4 a/4; a/4 a/4 3*a/4; 3*a/4 3*a/4 3*a/4];
 
 fig = figure('Name', 'Perovskite (ABO₃) Structure', ...
-             'Position', [50, 50, 1400, 800], 'Color', [0.02 0.02 0.06]);
+             'Units', 'normalized', 'OuterPosition', [0.02 0.04 0.96 0.90], ...
+             'Color', [0.02 0.02 0.06], 'NumberTitle', 'off');
 
-ax_main = axes('Position', [0.02 0.08 0.58 0.88]);
+ax_main = axes('Position', [0.03 0.08 0.56 0.88]);
 hold on;
 
 draw_octahedron_void(b_positions, a/2.5, oct_color, 0.15);
@@ -72,16 +73,16 @@ setup_3d_view('Perovskite (ABO₃) - Unit Cell');
 add_legend({'A-site (Ca/Ba)', 'B-site (Ti)', 'O²⁻', 'Oct. void (BO₆)', 'Tet. void'}, ...
            {a_color, b_color, o_color, oct_color, tet_void_color});
 
-ax_stack = axes('Position', [0.64 0.55 0.34 0.40]);
+ax_stack = axes('Position', [0.61 0.55 0.36 0.40]);
 draw_structure_exploded(ax_stack);
 
-ax_info = axes('Position', [0.64 0.32 0.34 0.20]);
+ax_info = axes('Position', [0.61 0.32 0.36 0.20]);
 draw_info_panel(ax_info);
 
-ax_coord = axes('Position', [0.64 0.05 0.16 0.24]);
+ax_coord = axes('Position', [0.61 0.05 0.17 0.24]);
 draw_b_coordination(ax_coord, b_color, o_color);
 
-ax_tol = axes('Position', [0.82 0.05 0.16 0.24]);
+ax_tol = axes('Position', [0.80 0.05 0.17 0.24]);
 draw_tolerance_factor(ax_tol);
 
 fprintf(' Use mouse to rotate main view. Close window to exit.\n');

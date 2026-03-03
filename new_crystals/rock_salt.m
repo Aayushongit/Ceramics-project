@@ -31,9 +31,10 @@ tet_void_positions = [a/4 a/4 a/4; 3*a/4 3*a/4 a/4; 3*a/4 a/4 3*a/4; a/4 3*a/4 3
                       3*a/4 a/4 a/4; a/4 3*a/4 a/4; a/4 a/4 3*a/4; 3*a/4 3*a/4 3*a/4];
 
 fig = figure('Name', 'Rock Salt (NaCl) Structure', ...
-             'Position', [50, 50, 1400, 800], 'Color', [0.02 0.02 0.06]);
+             'Units', 'normalized', 'OuterPosition', [0.02 0.04 0.96 0.90], ...
+             'Color', [0.02 0.02 0.06], 'NumberTitle', 'off');
 
-ax_main = axes('Position', [0.02 0.08 0.58 0.88]);
+ax_main = axes('Position', [0.03 0.08 0.56 0.88]);
 hold on;
 
 oct_void_positions = [a/2 a/2 a/2;
@@ -78,16 +79,16 @@ setup_3d_view('Rock Salt (NaCl) - Unit Cell');
 add_legend({'Cl⁻ (anion)', 'Na⁺ (cation)', 'Oct. void', 'Tet. void (empty)'}, ...
            {cl_color, na_color, oct_void_color, tet_void_color});
 
-ax_stack = axes('Position', [0.64 0.55 0.34 0.40]);
+ax_stack = axes('Position', [0.61 0.55 0.36 0.40]);
 draw_stacking_diagram(ax_stack);
 
-ax_info = axes('Position', [0.64 0.32 0.34 0.20]);
+ax_info = axes('Position', [0.61 0.32 0.36 0.20]);
 draw_info_panel(ax_info);
 
-ax_coord = axes('Position', [0.64 0.05 0.16 0.24]);
+ax_coord = axes('Position', [0.61 0.05 0.17 0.24]);
 draw_octahedral_coordination(ax_coord, na_color, cl_color);
 
-ax_pack = axes('Position', [0.82 0.05 0.16 0.24]);
+ax_pack = axes('Position', [0.80 0.05 0.17 0.24]);
 draw_packing_chart(ax_pack);
 
 fprintf(' Use mouse to rotate main view. Close window to exit.\n');

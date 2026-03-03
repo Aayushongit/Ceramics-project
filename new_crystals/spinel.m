@@ -53,9 +53,10 @@ b_positions = [a/4 0 a/4;
                a/8 a/8 3*a/8];
 
 fig = figure('Name', 'Spinel (AB₂O₄) Structure', ...
-             'Position', [50, 50, 1400, 800], 'Color', [0.02 0.02 0.06]);
+             'Units', 'normalized', 'OuterPosition', [0.02 0.04 0.96 0.90], ...
+             'Color', [0.02 0.02 0.06], 'NumberTitle', 'off');
 
-ax_main = axes('Position', [0.02 0.08 0.58 0.88]);
+ax_main = axes('Position', [0.03 0.08 0.56 0.88]);
 hold on;
 
 for i = 1:size(a_positions, 1)
@@ -89,16 +90,16 @@ setup_3d_view('Spinel (MgAl₂O₄) - Partial Unit Cell');
 add_legend({'A-site (Mg²⁺)', 'B-site (Al³⁺)', 'O²⁻', 'Tet. void', 'Oct. void'}, ...
            {a_color, b_color, o_color, tet_color, oct_color});
 
-ax_struct = axes('Position', [0.64 0.55 0.34 0.40]);
+ax_struct = axes('Position', [0.61 0.55 0.36 0.40]);
 draw_structure_schematic(ax_struct);
 
-ax_info = axes('Position', [0.64 0.32 0.34 0.20]);
+ax_info = axes('Position', [0.61 0.32 0.36 0.20]);
 draw_info_panel(ax_info);
 
-ax_void = axes('Position', [0.64 0.05 0.16 0.24]);
+ax_void = axes('Position', [0.61 0.05 0.17 0.24]);
 draw_void_occupation(ax_void);
 
-ax_type = axes('Position', [0.82 0.05 0.16 0.24]);
+ax_type = axes('Position', [0.80 0.05 0.17 0.24]);
 draw_spinel_types(ax_type);
 
 fprintf(' Use mouse to rotate main view. Close window to exit.\n');
