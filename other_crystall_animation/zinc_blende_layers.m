@@ -4,7 +4,7 @@ fprintf('\n ZINC BLENDE (ZnS) Layer Stacking Simulation\n');
 fprintf(' Building FCC S layers with Zn in HALF of tetrahedral voids\n\n');
 
 a = 1;
-nx = 4; ny = 4; nz = 3;
+nx = 3; ny = 3; nz = 2;
 
 s_color = [0.92 0.72 0.20];
 zn_color = [0.25 0.48 0.92];
@@ -26,7 +26,7 @@ fig = figure('Name', 'Zinc Blende Layer Stacking', ...
              'Units', 'normalized', 'OuterPosition', [0.02 0.04 0.96 0.92], ...
              'Color', [0.02 0.02 0.06], 'NumberTitle', 'off');
 
-ax_main = axes('Position', [0.02 0.08 0.58 0.88]);
+ax_main = axes('Position', [0.01 0.06 0.64 0.90]);
 hold on; grid on; box on; axis equal;
 set(gca, 'Color', [0.06 0.06 0.12], 'XColor', 'w', 'YColor', 'w', 'ZColor', 'w', ...
          'GridColor', [0.3 0.3 0.35]);
@@ -42,13 +42,13 @@ zn_pos = zn_pos - center;
 empty_tet_pos = empty_tet_pos - center;
 oct_pos = oct_pos - center;
 
-margin = max(max(all_pos) - min(all_pos)) * 0.2;
+margin = max(max(all_pos) - min(all_pos)) * 0.12;
 xlim([min(s_pos(:,1))-margin max(s_pos(:,1))+margin]);
 ylim([min(s_pos(:,2))-margin max(s_pos(:,2))+margin]);
-zlim([min(s_pos(:,3))-margin max(s_pos(:,3))+margin+0.5]);
+zlim([min(s_pos(:,3))-margin max(s_pos(:,3))+margin+0.3]);
 
-ax_stack = axes('Position', [0.62 0.55 0.36 0.42]);
-ax_info = axes('Position', [0.62 0.08 0.36 0.44]);
+ax_stack = axes('Position', [0.67 0.52 0.31 0.44]);
+ax_info = axes('Position', [0.67 0.04 0.31 0.44]);
 
 z_layers_s = unique(round(s_pos(:,3), 4));
 z_layers_zn = unique(round(zn_pos(:,3), 4));
@@ -82,8 +82,8 @@ set(lgd, 'TextColor', 'w', 'Color', [0.12 0.12 0.18], 'EdgeColor', [0.3 0.3 0.4]
 
 empty_tet_shown = false(size(empty_tet_pos, 1), 1);
 oct_shown = false(size(oct_pos, 1), 1);
-drop_height = 0.6;
-nsteps = 4;
+drop_height = 0.4;
+nsteps = 2;
 
 for L = 1:length(layer_info)
     if ~ishandle(fig), return; end
@@ -132,7 +132,7 @@ for L = 1:length(layer_info)
     end
 
     drawnow;
-    pause(0.08);
+    pause(0.02);
 end
 
 title(ax_main, 'Zinc Blende (ZnS) - Layer Stacking Complete', 'Color', [0.9 0.95 1.0], 'FontSize', 14, 'FontWeight', 'bold');
@@ -169,7 +169,7 @@ function animate_atom_drop(ax, target, radius, color, alpha, drop_h, nsteps)
                  'FaceColor', color, 'EdgeColor', 'none', 'FaceAlpha', alpha, ...
                  'FaceLighting', 'gouraud', 'AmbientStrength', 0.5, ...
                  'DiffuseStrength', 0.8, 'SpecularStrength', 0.8);
-        drawnow; pause(0.005);
+        drawnow;
     end
 end
 
