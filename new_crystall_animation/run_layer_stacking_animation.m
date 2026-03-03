@@ -35,14 +35,13 @@ end
 
 fig = figure('Name', cfg.window_title, ...
              'Units', 'normalized', ...
-             'OuterPosition', [0.02 0.04 0.96 0.90], ...
+             'OuterPosition', [0.08 0.08 0.84 0.82], ...
              'Color', [0.02 0.02 0.06], ...
              'NumberTitle', 'off');
 
-ax_main = axes('Parent', fig, 'Position', [0.03 0.08 0.68 0.88]);
-ax_info = axes('Parent', fig, 'Position', [0.74 0.56 0.24 0.40]);
-ax_layers = axes('Parent', fig, 'Position', [0.74 0.32 0.24 0.20]);
-ax_voids = axes('Parent', fig, 'Position', [0.74 0.08 0.24 0.20]);
+ax_main = axes('Parent', fig, 'Position', [0.05 0.10 0.68 0.84]);
+ax_info = axes('Parent', fig, 'Position', [0.76 0.57 0.21 0.35]);
+ax_voids = axes('Parent', fig, 'Position', [0.76 0.10 0.21 0.42]);
 
 n_species = numel(cfg.species);
 n_voids = numel(cfg.voids);
@@ -132,36 +131,6 @@ layer_values = unique(layer_values);
 layer_values = sort(layer_values);
 num_layers = numel(layer_values);
 
-layer_counts = zeros(num_layers, 1);
-for L = 1:num_layers
-    z_now = layer_values(L);
-    count_here = 0;
-    for s = 1:n_species
-        idx = abs(atom_pos{s}(:,3) - z_now) <= tol;
-        count_here = count_here + sum(idx);
-    end
-    layer_counts(L) = count_here;
-end
-
-axes(ax_layers);
-cla(ax_layers);
-hold(ax_layers, 'on');
-h_layer = bar(ax_layers, 1:num_layers, layer_counts, 0.7, 'FaceColor', 'flat', 'EdgeColor', 'w');
-base_c = repmat([0.30 0.45 0.85], num_layers, 1);
-set(h_layer, 'CData', base_c);
-set(ax_layers, 'Color', [0.08 0.08 0.13], 'XColor', 'w', 'YColor', 'w', 'GridColor', [0.30 0.30 0.35]);
-grid(ax_layers, 'on');
-xlim(ax_layers, [0.5 num_layers+0.5]);
-ylim(ax_layers, [0 max(layer_counts)*1.15 + 1]);
-if num_layers <= 16
-    xticks(ax_layers, 1:num_layers);
-else
-    xticks(ax_layers, round(linspace(1, num_layers, 12)));
-end
-xlabel(ax_layers, 'Layer index', 'Color', 'w');
-ylabel(ax_layers, 'Atoms in layer', 'Color', 'w');
-title(ax_layers, 'Layer population', 'Color', 'w', 'FontSize', 10, 'FontWeight', 'bold');
-
 void_totals = zeros(n_voids, 1);
 for v = 1:n_voids
     void_totals(v) = size(void_pos{v}, 1);
@@ -178,11 +147,9 @@ set(ax_voids, 'Color', [0.08 0.08 0.13], 'XColor', 'w', 'YColor', 'w', 'GridColo
 grid(ax_voids, 'on');
 xticks(ax_voids, xv);
 xticklabels(ax_voids, {cfg.voids.name});
-xtickangle(ax_voids, 20);
 ylim(ax_voids, [0 max(void_totals)*1.15 + 1]);
 ylabel(ax_voids, 'Count', 'Color', 'w');
-title(ax_voids, 'Void count: total vs visible', 'Color', 'w', 'FontSize', 10, 'FontWeight', 'bold');
-legend(ax_voids, {'Total', 'Visible'}, 'TextColor', 'w', 'Color', [0.12 0.12 0.18], 'Location', 'northwest');
+title(ax_voids, 'Void visibility', 'Color', 'w', 'FontSize', 10, 'FontWeight', 'bold');
 
 shown_void = cell(n_voids, 1);
 for i = 1:n_voids
@@ -217,18 +184,16 @@ for L = 1:num_layers
         void_visible(v) = sum(shown_void{v});
     end
 
-    cdata = base_c;
-    cdata(L,:) = [1.0 0.58 0.22];
-    set(h_layer, 'CData', cdata);
     set(h_visible, 'YData', void_visible);
 
-    void_text = '';
+    void_parts = cell(1, n_voids);
     for v = 1:n_voids
-        void_text = sprintf('%s%s: %d / %d\n', void_text, cfg.voids(v).name, void_visible(v), void_totals(v));
+        void_parts{v} = sprintf('%s %d/%d', cfg.voids(v).name, void_visible(v), void_totals(v));
     end
+    void_text = strjoin(void_parts, ' | ');
 
     title(ax_main, sprintf('%s | Layer %d/%d | z = %.2f | Visible atoms = %d', cfg.name, L, num_layers, z_now, shown_atoms), 'Color', 'w', 'FontSize', 14, 'FontWeight', 'bold');
-    set(status_handle, 'String', sprintf('Current layer: %d/%d\nVisible atoms: %d\n%s', L, num_layers, shown_atoms, void_text));
+    set(status_handle, 'String', sprintf('Layer %d/%d | Atoms %d\n%s', L, num_layers, shown_atoms, void_text));
 
     drawnow;
     pause(cfg.layer_pause);
@@ -314,24 +279,13 @@ text(0.04, 0.98, cfg.name, 'Units', 'normalized', 'Color', 'w', 'FontSize', 12, 
 text(0.04, 0.90, cfg.stacking_line, 'Units', 'normalized', 'Color', [0.8 0.85 0.95], 'FontSize', 9);
 
 y = 0.84;
-for i = 1:numel(cfg.info_lines)
+n_show = min(3, numel(cfg.info_lines));
+for i = 1:n_show
     text(0.04, y, cfg.info_lines{i}, 'Units', 'normalized', 'Color', [0.92 0.92 0.92], 'FontSize', 9);
     y = y - 0.055;
 end
 
-y = max(0.42, y - 0.02);
-text(0.04, y, 'Output legend', 'Units', 'normalized', 'Color', [0.9 0.95 1.0], 'FontSize', 10, 'FontWeight', 'bold');
-y = y - 0.06;
-
-for i = 1:numel(cfg.species)
-    rectangle('Position', [0.04 y-0.02 0.06 0.03], 'FaceColor', cfg.species(i).color, 'EdgeColor', 'w');
-    text(0.12, y-0.005, cfg.species(i).name, 'Units', 'normalized', 'Color', 'w', 'FontSize', 9);
-    y = y - 0.05;
-end
-
-for i = 1:numel(cfg.voids)
-    rectangle('Position', [0.04 y-0.02 0.06 0.03], 'FaceColor', cfg.voids(i).color, 'EdgeColor', 'w');
-    text(0.12, y-0.005, cfg.voids(i).name, 'Units', 'normalized', 'Color', 'w', 'FontSize', 9);
-    y = y - 0.05;
-end
+text(0.04, 0.28, 'Main legend shows atom and void colors', 'Units', 'normalized', 'Color', [0.9 0.95 1.0], 'FontSize', 9);
+text(0.04, 0.20, 'Rotate: mouse drag', 'Units', 'normalized', 'Color', [0.9 0.95 1.0], 'FontSize', 9);
+text(0.04, 0.13, 'Zoom: scroll', 'Units', 'normalized', 'Color', [0.9 0.95 1.0], 'FontSize', 9);
 end
