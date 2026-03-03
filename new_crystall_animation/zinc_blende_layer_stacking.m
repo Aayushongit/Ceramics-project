@@ -72,7 +72,7 @@ end
 
 fig = figure('Name', cfg.window_title, ...
              'Units', 'normalized', ...
-             'OuterPosition', [0.06 0.07 0.88 0.84], ...
+             'OuterPosition', [0.14 0.10 0.72 0.78], ...
              'Color', [0.02 0.02 0.06], ...
              'NumberTitle', 'off');
 
@@ -156,7 +156,7 @@ for i = 1:n_voids
     legend_labels{li} = cfg.voids(i).name;
 end
 lgd = legend(ax_main, [legend_handles{:}], legend_labels, 'Location', 'northeast');
-set(lgd, 'TextColor', 'w', 'Color', [0.12 0.12 0.18], 'EdgeColor', [0.30 0.30 0.40], 'FontSize', 8);
+set(lgd, 'TextColor', 'w', 'Color', [0.12 0.12 0.18], 'EdgeColor', [0.30 0.30 0.40], 'FontSize', 8, 'AutoUpdate', 'off');
 
 tol = max(cfg.a * 1e-3, 1e-4);
 layer_values = [];
