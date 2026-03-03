@@ -19,9 +19,9 @@ cfg.info_lines = {
 cfg.a = 1;
 cfg.grid = [3 3 2];
 cfg.drop_height = 0.8;
-cfg.layer_steps = 7;
-cfg.void_steps = 4;
-cfg.layer_pause = 0.12;
+cfg.layer_steps = 5;
+cfg.void_steps = 3;
+cfg.layer_pause = 0.04;
 cfg.atom_quality = 14;
 cfg.void_quality = 10;
 
@@ -48,13 +48,13 @@ if ~isfield(cfg, 'void_quality')
     cfg.void_quality = 12;
 end
 if ~isfield(cfg, 'layer_steps')
-    cfg.layer_steps = 8;
+    cfg.layer_steps = 5;
 end
 if ~isfield(cfg, 'void_steps')
-    cfg.void_steps = 5;
+    cfg.void_steps = 3;
 end
 if ~isfield(cfg, 'layer_pause')
-    cfg.layer_pause = 0.12;
+    cfg.layer_pause = 0.04;
 end
 if ~isfield(cfg, 'drop_height')
     cfg.drop_height = 0.9 * cfg.a;
@@ -352,7 +352,7 @@ for i = 1:size(points, 1)
         pos = start_pos + t * (end_pos - start_pos);
         h = draw_single_sphere(ax, pos, radius, color, alpha, quality);
         drawnow;
-        pause(0.006);
+        pause(0.002);
     end
 end
 end
