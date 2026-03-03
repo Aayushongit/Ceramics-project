@@ -1,8 +1,3 @@
-% Zinc Blende (ZnS) Crystal Structure Visualization
-% Structure: FCC lattice of S²⁻ with Zn²⁺ in HALF of tetrahedral voids
-% Atoms/cell: 4 S + 4 Zn = 8 total
-% Coordination: Zn: 4 (tetrahedral), S: 4 (tetrahedral)
-
 clear; clc; close all;
 
 fprintf('\n ZINC BLENDE (ZnS) Crystal Structure\n');
@@ -11,64 +6,67 @@ fprintf(' Atoms per unit cell: 4 S + 4 Zn = 8\n');
 fprintf(' Coordination: Zn=4 (tetrahedral), S=4 (tetrahedral)\n');
 fprintf(' Stacking: ABCABC with alternating tetrahedral site occupation\n\n');
 
-% Parameters
-a = 1;                          % Lattice parameter
-s_radius = 0.14;                % S atom radius
-zn_radius = 0.10;               % Zn atom radius
-tet_void_radius = 0.04;         % Tetrahedral void indicator
+a = 1;
+s_radius = 0.14;
+zn_radius = 0.10;
 sphere_quality = 30;
 
-% Colors
-s_color = [0.9 0.7 0.2];        % Yellow/Gold for anion
-zn_color = [0.2 0.4 0.8];       % Blue for cation
-tet_void_color = [0.2 0.8 0.3]; % Green for tetrahedral voids
+s_color = [0.9 0.7 0.2];
+zn_color = [0.2 0.4 0.8];
+tet_void_color = [0.2 0.8 0.3];
+oct_void_color = [1.0 0.5 0.0];
 cell_edge_color = [0.3 0.3 0.3];
 
-% S²⁻ positions (FCC lattice)
 s_corners = [0 0 0; a 0 0; 0 a 0; 0 0 a; a a 0; a 0 a; 0 a a; a a a];
 s_faces = [a/2 a/2 0; a/2 a/2 a; a/2 0 a/2; a/2 a a/2; 0 a/2 a/2; a a/2 a/2];
 s_positions = [s_corners; s_faces];
 
-% Zn²⁺ positions (HALF of tetrahedral voids - every other one)
-% Tetrahedral voids at (1/4,1/4,1/4) type positions - selecting 4 of 8
 zn_positions = [a/4 a/4 a/4;
                 3*a/4 3*a/4 a/4;
                 3*a/4 a/4 3*a/4;
                 a/4 3*a/4 3*a/4];
 
-% Empty tetrahedral voids (the other 4)
 empty_tet_voids = [3*a/4 a/4 a/4;
                    a/4 3*a/4 a/4;
                    a/4 a/4 3*a/4;
                    3*a/4 3*a/4 3*a/4];
 
-% Create figure with multi-panel layout
+oct_void_positions = [a/2 a/2 a/2];
+
 fig = figure('Name', 'Zinc Blende (ZnS) Structure', ...
              'Position', [50, 50, 1400, 800], 'Color', [0.02 0.02 0.06]);
 
-% Main 3D view (left panel - 60% width)
 ax_main = axes('Position', [0.02 0.08 0.58 0.88]);
 hold on;
 
-% Draw S atoms
+all_oct_voids = [a/2 a/2 a/2;
+                 a/2 0 0; 0 a/2 0; 0 0 a/2;
+                 a a/2 0; a 0 a/2; 0 a a/2;
+                 a/2 a 0; 0 a/2 a; a/2 0 a;
+                 a a/2 a; a/2 a a; a a a/2];
+
+for i = 1:size(all_oct_voids, 1)
+    draw_octahedron_void(all_oct_voids(i,:), a/5, oct_void_color, 0.08);
+end
+
+for i = 1:size(zn_positions, 1)
+    draw_tetrahedron_void(zn_positions(i,:), a/7, tet_void_color, 0.2);
+end
+
+for i = 1:size(empty_tet_voids, 1)
+    draw_tetrahedron_void(empty_tet_voids(i,:), a/7, [0.5 0.5 0.5], 0.12);
+end
+
 for i = 1:size(s_positions, 1)
     draw_sphere(s_positions(i,:), s_radius, s_color, 0.85, sphere_quality);
 end
 
-% Draw Zn atoms (in tetrahedral voids)
 for i = 1:size(zn_positions, 1)
     draw_sphere(zn_positions(i,:), zn_radius, zn_color, 0.9, sphere_quality);
 end
 
-% Draw empty tetrahedral voids
-for i = 1:size(empty_tet_voids, 1)
-    draw_sphere(empty_tet_voids(i,:), tet_void_radius, tet_void_color, 0.5, sphere_quality);
-end
-
-% Draw unit cell edges
 draw_cube_edges(a, cell_edge_color, 2);
 
-% Draw bonds between Zn and neighboring S (tetrahedral coordination)
 bond_color = [0.5 0.5 0.5];
 for i = 1:size(zn_positions, 1)
     zn_pos = zn_positions(i,:);
@@ -81,28 +79,22 @@ for i = 1:size(zn_positions, 1)
 end
 
 setup_3d_view('Zinc Blende (ZnS) - Unit Cell');
-add_legend({'S²⁻ (anion)', 'Zn²⁺ (cation)', 'Empty tet. void'}, ...
-           {s_color, zn_color, tet_void_color});
+add_legend({'S²⁻ (anion)', 'Zn²⁺ (cation)', 'Tet. void (filled)', 'Oct. void (empty)'}, ...
+           {s_color, zn_color, tet_void_color, oct_void_color});
 
-% Stacking diagram (top-right)
 ax_stack = axes('Position', [0.64 0.55 0.34 0.40]);
 draw_stacking_diagram(ax_stack);
 
-% Info panel (middle-right)
 ax_info = axes('Position', [0.64 0.32 0.34 0.20]);
 draw_info_panel(ax_info);
 
-% Coordination polyhedron (bottom-right)
 ax_coord = axes('Position', [0.64 0.05 0.16 0.24]);
 draw_tetrahedral_coordination(ax_coord, zn_color, s_color);
 
-% Void occupation diagram (bottom-right-right)
 ax_void = axes('Position', [0.82 0.05 0.16 0.24]);
 draw_void_occupation(ax_void);
 
 fprintf(' Use mouse to rotate main view. Close window to exit.\n');
-
-% === Helper Functions ===
 
 function draw_sphere(center, radius, color, alpha, n)
     [X, Y, Z] = sphere(n);
@@ -113,6 +105,33 @@ function draw_sphere(center, radius, color, alpha, n)
          'FaceAlpha', alpha, 'FaceLighting', 'gouraud', ...
          'AmbientStrength', 0.5, 'DiffuseStrength', 0.8, ...
          'SpecularStrength', 0.9, 'SpecularExponent', 25);
+end
+
+function draw_tetrahedron_void(center, size, color, alpha)
+    c = center;
+    s = size;
+    verts = [c(1)+s c(2)+s c(3)+s;
+             c(1)+s c(2)-s c(3)-s;
+             c(1)-s c(2)+s c(3)-s;
+             c(1)-s c(2)-s c(3)+s];
+    faces = [1 2 3; 1 2 4; 1 3 4; 2 3 4];
+    patch('Vertices', verts, 'Faces', faces, 'FaceColor', color, ...
+          'FaceAlpha', alpha, 'EdgeColor', color, 'LineWidth', 1);
+end
+
+function draw_octahedron_void(center, half_diag, color, alpha)
+    c = center;
+    hd = half_diag;
+    verts = [c(1)+hd c(2) c(3);
+             c(1)-hd c(2) c(3);
+             c(1) c(2)+hd c(3);
+             c(1) c(2)-hd c(3);
+             c(1) c(2) c(3)+hd;
+             c(1) c(2) c(3)-hd];
+    faces = [1 3 5; 1 5 4; 1 4 6; 1 6 3;
+             2 3 5; 2 5 4; 2 4 6; 2 6 3];
+    patch('Vertices', verts, 'Faces', faces, 'FaceColor', color, ...
+          'FaceAlpha', alpha, 'EdgeColor', color, 'LineWidth', 1.5);
 end
 
 function draw_cube_edges(a, color, width)
@@ -158,20 +177,16 @@ end
 function draw_stacking_diagram(ax)
     axes(ax); hold on;
 
-    % Draw ABCABC stacking layers
     layer_colors = [0.9 0.3 0.3; 0.3 0.9 0.3; 0.3 0.3 0.9];
     layer_labels = {'A', 'B', 'C', 'A', 'B', 'C'};
 
     for i = 1:6
         y = 7 - i;
         color_idx = mod(i-1, 3) + 1;
-        % Draw layer rectangle
         fill([0 4 4 0], [y y y+0.7 y+0.7], layer_colors(color_idx,:), ...
              'EdgeColor', 'w', 'FaceAlpha', 0.7);
-        % Layer label
         text(-0.5, y+0.35, layer_labels{i}, 'FontSize', 14, 'FontWeight', 'bold', ...
              'Color', 'w', 'HorizontalAlignment', 'center');
-        % Atom type (alternating S and Zn layers concept)
         if mod(i, 2) == 1
             text(2, y+0.35, 'S²⁻ layer', 'FontSize', 10, 'Color', 'w', ...
                  'HorizontalAlignment', 'center');
@@ -181,7 +196,6 @@ function draw_stacking_diagram(ax)
         end
     end
 
-    % Add note about half occupation
     text(2, 0.3, 'Only half of tet. voids filled', 'FontSize', 9, 'Color', [0.8 0.8 0.3], ...
          'HorizontalAlignment', 'center', 'FontStyle', 'italic');
 
@@ -218,24 +232,19 @@ end
 function draw_tetrahedral_coordination(ax, cation_color, anion_color)
     axes(ax); hold on;
 
-    % Draw central cation
     [X, Y, Z] = sphere(20);
     surf(X*0.15, Y*0.15, Z*0.15, 'FaceColor', cation_color, 'EdgeColor', 'none', ...
          'FaceAlpha', 0.9, 'FaceLighting', 'gouraud');
 
-    % Draw 4 coordinating anions (tetrahedral)
-    % Tetrahedral positions
     tet_pos = [1 1 1; 1 -1 -1; -1 1 -1; -1 -1 1] * 0.35;
     for i = 1:4
         surf(X*0.12 + tet_pos(i,1), Y*0.12 + tet_pos(i,2), Z*0.12 + tet_pos(i,3), ...
              'FaceColor', anion_color, 'EdgeColor', 'none', ...
              'FaceAlpha', 0.8, 'FaceLighting', 'gouraud');
-        % Draw bond
         plot3([0 tet_pos(i,1)], [0 tet_pos(i,2)], [0 tet_pos(i,3)], ...
               'Color', [0.6 0.6 0.6], 'LineWidth', 1.5);
     end
 
-    % Draw tetrahedron wireframe
     edges = [1 2; 1 3; 1 4; 2 3; 2 4; 3 4];
     for i = 1:size(edges, 1)
         p1 = tet_pos(edges(i,1), :);
@@ -254,7 +263,6 @@ end
 function draw_void_occupation(ax)
     axes(ax); hold on;
 
-    % Void occupation data for zinc blende
     void_types = {'Oct.', 'Tet.'};
     total_voids = [4, 8];
     filled_voids = [0, 4];
@@ -262,9 +270,7 @@ function draw_void_occupation(ax)
     bar_width = 0.35;
     x = 1:2;
 
-    % Total voids (background)
     bar(x, total_voids, bar_width*2, 'FaceColor', [0.3 0.3 0.3], 'EdgeColor', 'w');
-    % Filled voids (overlay)
     bar(x, filled_voids, bar_width*2, 'FaceColor', [0.2 0.7 0.3], 'EdgeColor', 'w');
 
     xlim([0.3 2.7]);
@@ -274,7 +280,6 @@ function draw_void_occupation(ax)
     ylabel('Voids/cell', 'Color', 'w', 'FontSize', 9);
     title('Void Occupation', 'FontSize', 10, 'FontWeight', 'bold', 'Color', 'w');
 
-    % Add labels
     text(1, 4.5, '0/4', 'Color', 'w', 'FontSize', 9, 'HorizontalAlignment', 'center');
     text(2, 5, '4/8', 'Color', 'w', 'FontSize', 9, 'HorizontalAlignment', 'center');
 

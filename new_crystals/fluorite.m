@@ -1,8 +1,3 @@
-% Fluorite (CaF₂) Crystal Structure Visualization
-% Structure: FCC lattice of Ca²⁺ with F⁻ in ALL tetrahedral voids
-% Atoms/cell: 4 Ca + 8 F = 12 total
-% Coordination: Ca: 8 (cubic), F: 4 (tetrahedral)
-
 clear; clc; close all;
 
 fprintf('\n FLUORITE (CaF₂) Crystal Structure\n');
@@ -11,24 +6,21 @@ fprintf(' Atoms per unit cell: 4 Ca + 8 F = 12\n');
 fprintf(' Coordination: Ca=8 (cubic), F=4 (tetrahedral)\n');
 fprintf(' Special: All 8 tetrahedral voids are occupied\n\n');
 
-% Parameters
-a = 1;                          % Lattice parameter
-ca_radius = 0.14;               % Ca atom radius
-f_radius = 0.09;                % F atom radius (smaller)
+a = 1;
+ca_radius = 0.14;
+f_radius = 0.09;
 sphere_quality = 30;
 
-% Colors
-ca_color = [0.2 0.4 0.8];       % Blue for Ca cation
-f_color = [0.9 0.3 0.3];        % Red for F anion
-tet_void_color = [0.2 0.8 0.3]; % Green for reference
+ca_color = [0.2 0.4 0.8];
+f_color = [0.9 0.3 0.3];
+tet_void_color = [0.2 0.8 0.3];
+oct_void_color = [1.0 0.5 0.0];
 cell_edge_color = [0.3 0.3 0.3];
 
-% Ca²⁺ positions (FCC lattice)
 ca_corners = [0 0 0; a 0 0; 0 a 0; 0 0 a; a a 0; a 0 a; 0 a a; a a a];
 ca_faces = [a/2 a/2 0; a/2 a/2 a; a/2 0 a/2; a/2 a a/2; 0 a/2 a/2; a a/2 a/2];
 ca_positions = [ca_corners; ca_faces];
 
-% F⁻ positions (ALL 8 tetrahedral voids)
 f_positions = [a/4 a/4 a/4;
                3*a/4 3*a/4 a/4;
                3*a/4 a/4 3*a/4;
@@ -38,28 +30,38 @@ f_positions = [a/4 a/4 a/4;
                a/4 a/4 3*a/4;
                3*a/4 3*a/4 3*a/4];
 
-% Create figure with multi-panel layout
+oct_void_positions = [a/2 a/2 a/2];
+
 fig = figure('Name', 'Fluorite (CaF₂) Structure', ...
              'Position', [50, 50, 1400, 800], 'Color', [0.02 0.02 0.06]);
 
-% Main 3D view (left panel - 60% width)
 ax_main = axes('Position', [0.02 0.08 0.58 0.88]);
 hold on;
 
-% Draw Ca atoms
+all_oct_voids = [a/2 a/2 a/2;
+                 a/2 0 0; 0 a/2 0; 0 0 a/2;
+                 a a/2 0; a 0 a/2; 0 a a/2;
+                 a/2 a 0; 0 a/2 a; a/2 0 a;
+                 a a/2 a; a/2 a a; a a a/2];
+
+for i = 1:size(all_oct_voids, 1)
+    draw_octahedron_void(all_oct_voids(i,:), a/5, oct_void_color, 0.08);
+end
+
+for i = 1:size(f_positions, 1)
+    draw_tetrahedron_void(f_positions(i,:), a/7, tet_void_color, 0.2);
+end
+
 for i = 1:size(ca_positions, 1)
     draw_sphere(ca_positions(i,:), ca_radius, ca_color, 0.85, sphere_quality);
 end
 
-% Draw F atoms (in all tetrahedral voids)
 for i = 1:size(f_positions, 1)
     draw_sphere(f_positions(i,:), f_radius, f_color, 0.9, sphere_quality);
 end
 
-% Draw unit cell edges
 draw_cube_edges(a, cell_edge_color, 2);
 
-% Draw bonds between F and neighboring Ca
 bond_color = [0.5 0.5 0.5];
 for i = 1:size(f_positions, 1)
     f_pos = f_positions(i,:);
@@ -71,32 +73,25 @@ for i = 1:size(f_positions, 1)
     end
 end
 
-% Draw cubic coordination around Ca at body center position (illustrative)
-% Show the 8 F atoms surrounding a Ca (simple cube)
-draw_cubic_polyhedron([a/2 a/2 a/2], a/4, [0.4 0.8 0.4], 0.3);
+draw_cubic_polyhedron([a/2 a/2 a/2], a/4, [0.4 0.8 0.4], 0.15);
 
 setup_3d_view('Fluorite (CaF₂) - Unit Cell');
-add_legend({'Ca²⁺ (cation)', 'F⁻ (anion)'}, {ca_color, f_color});
+add_legend({'Ca²⁺ (cation)', 'F⁻ (anion)', 'Tet. void (filled)', 'Oct. void (empty)'}, ...
+           {ca_color, f_color, tet_void_color, oct_void_color});
 
-% Stacking diagram (top-right)
 ax_stack = axes('Position', [0.64 0.55 0.34 0.40]);
 draw_stacking_diagram(ax_stack);
 
-% Info panel (middle-right)
 ax_info = axes('Position', [0.64 0.32 0.34 0.20]);
 draw_info_panel(ax_info);
 
-% Coordination polyhedron (bottom-right)
 ax_coord = axes('Position', [0.64 0.05 0.16 0.24]);
 draw_cubic_coordination(ax_coord, ca_color, f_color);
 
-% Void occupation diagram (bottom-right-right)
 ax_void = axes('Position', [0.82 0.05 0.16 0.24]);
 draw_void_occupation(ax_void);
 
 fprintf(' Use mouse to rotate main view. Close window to exit.\n');
-
-% === Helper Functions ===
 
 function draw_sphere(center, radius, color, alpha, n)
     [X, Y, Z] = sphere(n);
@@ -107,6 +102,33 @@ function draw_sphere(center, radius, color, alpha, n)
          'FaceAlpha', alpha, 'FaceLighting', 'gouraud', ...
          'AmbientStrength', 0.5, 'DiffuseStrength', 0.8, ...
          'SpecularStrength', 0.9, 'SpecularExponent', 25);
+end
+
+function draw_tetrahedron_void(center, size, color, alpha)
+    c = center;
+    s = size;
+    verts = [c(1)+s c(2)+s c(3)+s;
+             c(1)+s c(2)-s c(3)-s;
+             c(1)-s c(2)+s c(3)-s;
+             c(1)-s c(2)-s c(3)+s];
+    faces = [1 2 3; 1 2 4; 1 3 4; 2 3 4];
+    patch('Vertices', verts, 'Faces', faces, 'FaceColor', color, ...
+          'FaceAlpha', alpha, 'EdgeColor', color, 'LineWidth', 1);
+end
+
+function draw_octahedron_void(center, half_diag, color, alpha)
+    c = center;
+    hd = half_diag;
+    verts = [c(1)+hd c(2) c(3);
+             c(1)-hd c(2) c(3);
+             c(1) c(2)+hd c(3);
+             c(1) c(2)-hd c(3);
+             c(1) c(2) c(3)+hd;
+             c(1) c(2) c(3)-hd];
+    faces = [1 3 5; 1 5 4; 1 4 6; 1 6 3;
+             2 3 5; 2 5 4; 2 4 6; 2 6 3];
+    patch('Vertices', verts, 'Faces', faces, 'FaceColor', color, ...
+          'FaceAlpha', alpha, 'EdgeColor', color, 'LineWidth', 1.5);
 end
 
 function draw_cube_edges(a, color, width)
@@ -120,7 +142,6 @@ function draw_cube_edges(a, color, width)
 end
 
 function draw_cubic_polyhedron(center, half_side, color, alpha)
-    % Draw a small cube wireframe centered at 'center'
     hs = half_side;
     c = center;
     verts = [c(1)-hs c(2)-hs c(3)-hs;
@@ -170,7 +191,6 @@ end
 function draw_stacking_diagram(ax)
     axes(ax); hold on;
 
-    % Draw structure layers showing Ca FCC with F in tetrahedral sites
     layer_y = [6 5 4 3 2 1];
     layer_labels = {'Ca (A)', 'F tet', 'Ca (B)', 'F tet', 'Ca (C)', 'F tet'};
     layer_colors = {[0.2 0.4 0.8], [0.9 0.3 0.3], [0.2 0.4 0.8], ...
@@ -178,15 +198,12 @@ function draw_stacking_diagram(ax)
 
     for i = 1:6
         y = layer_y(i);
-        % Draw layer rectangle
         fill([0 4 4 0], [y y y+0.7 y+0.7], layer_colors{i}, ...
              'EdgeColor', 'w', 'FaceAlpha', 0.7);
-        % Layer label
         text(2, y+0.35, layer_labels{i}, 'FontSize', 11, 'FontWeight', 'bold', ...
              'Color', 'w', 'HorizontalAlignment', 'center');
     end
 
-    % Add note
     text(2, 0.3, 'All 8 tetrahedral voids filled', 'FontSize', 9, 'Color', [0.8 0.8 0.3], ...
          'HorizontalAlignment', 'center', 'FontStyle', 'italic');
 
@@ -223,24 +240,20 @@ end
 function draw_cubic_coordination(ax, cation_color, anion_color)
     axes(ax); hold on;
 
-    % Draw central cation (Ca)
     [X, Y, Z] = sphere(20);
     surf(X*0.18, Y*0.18, Z*0.18, 'FaceColor', cation_color, 'EdgeColor', 'none', ...
          'FaceAlpha', 0.9, 'FaceLighting', 'gouraud');
 
-    % Draw 8 coordinating anions (cubic coordination)
     cubic_pos = [1 1 1; 1 1 -1; 1 -1 1; 1 -1 -1;
                  -1 1 1; -1 1 -1; -1 -1 1; -1 -1 -1] * 0.35;
     for i = 1:8
         surf(X*0.10 + cubic_pos(i,1), Y*0.10 + cubic_pos(i,2), Z*0.10 + cubic_pos(i,3), ...
              'FaceColor', anion_color, 'EdgeColor', 'none', ...
              'FaceAlpha', 0.8, 'FaceLighting', 'gouraud');
-        % Draw bond
         plot3([0 cubic_pos(i,1)], [0 cubic_pos(i,2)], [0 cubic_pos(i,3)], ...
               'Color', [0.6 0.6 0.6], 'LineWidth', 1);
     end
 
-    % Draw cube wireframe
     edges = [1 2; 1 3; 1 5; 2 4; 2 6; 3 4; 3 7; 4 8; 5 6; 5 7; 6 8; 7 8];
     for i = 1:size(edges, 1)
         p1 = cubic_pos(edges(i,1), :);
@@ -259,7 +272,6 @@ end
 function draw_void_occupation(ax)
     axes(ax); hold on;
 
-    % Void occupation data for fluorite
     void_types = {'Oct.', 'Tet.'};
     total_voids = [4, 8];
     filled_voids = [0, 8];
@@ -267,9 +279,7 @@ function draw_void_occupation(ax)
     bar_width = 0.35;
     x = 1:2;
 
-    % Total voids (background)
     bar(x, total_voids, bar_width*2, 'FaceColor', [0.3 0.3 0.3], 'EdgeColor', 'w');
-    % Filled voids (overlay)
     bar(x, filled_voids, bar_width*2, 'FaceColor', [0.9 0.3 0.3], 'EdgeColor', 'w');
 
     xlim([0.3 2.7]);
@@ -279,7 +289,6 @@ function draw_void_occupation(ax)
     ylabel('Voids/cell', 'Color', 'w', 'FontSize', 9);
     title('Void Occupation', 'FontSize', 10, 'FontWeight', 'bold', 'Color', 'w');
 
-    % Add labels
     text(1, 4.5, '0/4', 'Color', 'w', 'FontSize', 9, 'HorizontalAlignment', 'center');
     text(2, 8.5, '8/8', 'Color', 'w', 'FontSize', 9, 'HorizontalAlignment', 'center');
 
