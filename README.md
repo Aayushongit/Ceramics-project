@@ -1,6 +1,6 @@
 # Crystal Structure Visualization - MATLAB
 
-Interactive 3D visualization of FCC (Face-Centered Cubic) and HCP (Hexagonal Close-Packed) crystal structures with interstitial voids.
+Interactive 3D visualization of crystal structures including FCC, HCP, and various ionic crystal structures with interstitial voids and layer stacking animations.
 
 ## Screenshots
 
@@ -9,6 +9,15 @@ Interactive 3D visualization of FCC (Face-Centered Cubic) and HCP (Hexagonal Clo
 
 ### FCC Unit Cell with Voids
 ![FCC Unit Cell](assets/fcc_unit_cell.png)
+
+### Anti-Fluorite Layer Stacking Animation
+![Anti-Fluorite Layer Stacking](assets/anti_fluorite_layer_stacking.png)
+
+### Perovskite Layer Stacking Animation
+![Perovskite Layer Stacking](assets/perovskite_layer_stacking.png)
+
+### Diamond Layer Stacking Animation
+![Diamond Layer Stacking](assets/diamond_layer_stacking.png)
 
 ## Project Structure
 
@@ -23,11 +32,31 @@ Ceramics-project/
 │   ├── hcp_all_voids.m          # HCP with all voids
 │   └── fcc_hcp_comparison.m     # Side-by-side comparison
 │
-├── crystall_animation/          # Animated layer stacking
+├── crystall_animation/          # Animated layer stacking (FCC/HCP)
 │   ├── fcc_animation.m          # FCC ABC stacking animation
 │   ├── hcp_animation.m          # HCP ABAB stacking animation
 │   ├── fcc_hcp_comparison.m     # Static comparison view
 │   └── unit_cell_explorer.m     # Interactive FCC unit cell
+│
+├── new_crystals/                # Static ionic crystal visualizations
+│   ├── rock_salt.m              # NaCl structure (Cl FCC + Na in oct voids)
+│   ├── zinc_blende.m            # ZnS structure (S FCC + Zn in half tet voids)
+│   ├── fluorite.m               # CaF₂ structure (Ca FCC + F in all tet voids)
+│   ├── anti_fluorite.m          # Li₂O structure (O FCC + Li in all tet voids)
+│   ├── perovskite.m             # CaTiO₃ structure (ABO₃)
+│   ├── spinel.m                 # MgAl₂O₄ structure (AB₂O₄)
+│   └── diamond.m                # Diamond structure (C in FCC + half tet voids)
+│
+├── other_crystall_animation/    # Layer stacking animations for ionic crystals
+│   ├── rock_salt_layers.m       # NaCl layer-by-layer stacking
+│   ├── zinc_blende_layers.m     # ZnS layer-by-layer stacking
+│   ├── fluorite_layers.m        # CaF₂ layer-by-layer stacking
+│   ├── anti_fluorite_layers.m   # Li₂O layer-by-layer stacking
+│   ├── perovskite_layers.m      # CaTiO₃ layer-by-layer stacking
+│   ├── spinel_layers.m          # MgAl₂O₄ layer-by-layer stacking
+│   └── diamond_layers.m         # Diamond layer-by-layer stacking
+│
+├── assets/                      # Screenshots and images
 │
 └── README.md
 ```
