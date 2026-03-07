@@ -20,11 +20,7 @@ cl_pos = generate_positions(cl_basis, nx, ny, nz, a);
 na_pos = generate_positions(na_basis, nx, ny, nz, a);
 tet_pos = generate_positions(tet_basis, nx, ny, nz, a);
 
-fig = figure('Name', 'Rock Salt Layer Stacking', ...
-             'Units', 'normalized', 'OuterPosition', [0.02 0.04 0.96 0.92], ...
-             'Color', [0.02 0.02 0.06], 'NumberTitle', 'off');
-
-ax_main = axes('Position', [0.01 0.06 0.64 0.90]);
+[fig, ax_main, ax_stack, ax_info] = create_layer_stacking_figure('Rock Salt Layer Stacking');
 hold on; grid on; box on; axis equal;
 set(gca, 'Color', [0.06 0.06 0.12], 'XColor', 'w', 'YColor', 'w', 'ZColor', 'w', ...
          'GridColor', [0.3 0.3 0.35]);
@@ -43,9 +39,6 @@ margin = max(max(all_pos) - min(all_pos)) * 0.12;
 xlim([min(cl_pos(:,1))-margin max(cl_pos(:,1))+margin]);
 ylim([min(cl_pos(:,2))-margin max(cl_pos(:,2))+margin]);
 zlim([min(cl_pos(:,3))-margin max(cl_pos(:,3))+margin+0.3]);
-
-ax_stack = axes('Position', [0.67 0.52 0.31 0.44]);
-ax_info = axes('Position', [0.67 0.04 0.31 0.44]);
 
 z_layers_cl = unique(round(cl_pos(:,3), 4));
 z_layers_na = unique(round(na_pos(:,3), 4));
@@ -247,4 +240,91 @@ function draw_info_panel(ax, n_cl, n_na, n_tet)
         end
         y = y - 0.065;
     end
+end
+
+function [fig, ax_main, ax_stack, ax_info] = create_layer_stacking_figure(fig_name)
+    monitor = get_active_monitor();
+    fig = figure('Name', fig_name, ...
+                 'Units', 'pixels', 'Position', get_figure_position(monitor), ...
+                 'Color', [0.02 0.02 0.06], 'NumberTitle', 'off', 'Resize', 'on');
+    ax_main = axes('Parent', fig, 'Units', 'pixels');
+    ax_stack = axes('Parent', fig, 'Units', 'pixels');
+    ax_info = axes('Parent', fig, 'Units', 'pixels');
+    setappdata(fig, 'layer_axes', [ax_main ax_stack ax_info]);
+    set(fig, 'SizeChangedFcn', @resize_layer_stacking_figure);
+    resize_layer_stacking_figure(fig, []);
+    axes(ax_main);
+end
+
+function resize_layer_stacking_figure(fig, ~)
+    if ~ishandle(fig)
+        return;
+    end
+
+    axes_handles = getappdata(fig, 'layer_axes');
+    if numel(axes_handles) ~= 3 || any(~ishandle(axes_handles))
+        return;
+    end
+
+    pos = get(fig, 'Position');
+    w = max(pos(3), 320);
+    h = max(pos(4), 240);
+    pad = max(14, round(min(w, h) * 0.02));
+    gap = max(10, round(min(w, h) * 0.015));
+    inner_w = max(w - 2 * pad, 120);
+    inner_h = max(h - 2 * pad, 120);
+
+    if w < 1180 || w / h < 1.45
+        panel_h_max = max(floor((inner_h - gap) * 0.38), 90);
+        panel_h = min(max(round(inner_h * 0.24), 110), panel_h_max);
+        main_h = inner_h - panel_h - gap;
+        left_w = floor((inner_w - gap) / 2);
+        right_w = inner_w - left_w - gap;
+
+        set(axes_handles(1), 'Position', [pad pad + panel_h + gap inner_w main_h]);
+        set(axes_handles(2), 'Position', [pad pad left_w panel_h]);
+        set(axes_handles(3), 'Position', [pad + left_w + gap pad right_w panel_h]);
+    else
+        side_w_max = max(floor((inner_w - gap) * 0.38), 180);
+        side_w = min(max(round(inner_w * 0.31), 280), side_w_max);
+        main_w = inner_w - side_w - gap;
+        lower_h = floor((inner_h - gap) / 2);
+        upper_h = inner_h - lower_h - gap;
+        side_x = pad + main_w + gap;
+
+        set(axes_handles(1), 'Position', [pad pad main_w inner_h]);
+        set(axes_handles(2), 'Position', [side_x pad + lower_h + gap side_w upper_h]);
+        set(axes_handles(3), 'Position', [side_x pad side_w lower_h]);
+    end
+end
+
+function monitor = get_active_monitor()
+    monitors = get(0, 'MonitorPositions');
+    if isempty(monitors)
+        monitor = get(0, 'ScreenSize');
+        return;
+    end
+
+    pointer = get(0, 'PointerLocation');
+    idx = find(pointer(1) >= monitors(:, 1) & ...
+               pointer(1) <= monitors(:, 1) + monitors(:, 3) & ...
+               pointer(2) >= monitors(:, 2) & ...
+               pointer(2) <= monitors(:, 2) + monitors(:, 4), 1, 'first');
+
+    if isempty(idx)
+        idx = 1;
+    end
+    monitor = monitors(idx, :);
+end
+
+function pos = get_figure_position(monitor)
+    margin_x = max(20, round(monitor(3) * 0.04));
+    margin_y = max(30, round(monitor(4) * 0.07));
+    usable_w = max(monitor(3) - 2 * margin_x, 420);
+    usable_h = max(monitor(4) - 2 * margin_y, 320);
+    w = min(round(monitor(3) * 0.88), usable_w);
+    h = min(round(monitor(4) * 0.84), usable_h);
+    x = monitor(1) + round((monitor(3) - w) / 2);
+    y = monitor(2) + round((monitor(4) - h) / 2);
+    pos = [x y w h];
 end
