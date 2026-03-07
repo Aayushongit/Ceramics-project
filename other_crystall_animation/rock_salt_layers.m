@@ -298,7 +298,42 @@ function resize_layer_stacking_figure(fig, ~)
     end
 end
 
+function bounds = get_matlab_desktop_bounds()
+    bounds = [];
+    try
+        if ~(exist('usejava', 'builtin') == 5 || exist('usejava', 'file') == 2)
+            return;
+        end
+        if ~usejava('awt')
+            return;
+        end
+        main_frame = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame;
+        if isempty(main_frame)
+            return;
+        end
+        loc = main_frame.getLocationOnScreen;
+        frame_size = main_frame.getSize;
+        bounds = [double(loc.getX) double(loc.getY) ...
+                  double(frame_size.getWidth) double(frame_size.getHeight)];
+        if any(bounds(3:4) <= 0)
+            frame_bounds = main_frame.getBounds;
+            bounds = [double(frame_bounds.getX) double(frame_bounds.getY) ...
+                      double(frame_bounds.getWidth) double(frame_bounds.getHeight)];
+        end
+        if any(bounds(3:4) <= 0)
+            bounds = [];
+        end
+    catch
+        bounds = [];
+    end
+end
+
 function monitor = get_active_monitor()
+    monitor = get_matlab_desktop_bounds();
+    if ~isempty(monitor)
+        return;
+    end
+
     monitors = get(0, 'MonitorPositions');
     if isempty(monitors)
         monitor = get(0, 'ScreenSize');
@@ -318,12 +353,18 @@ function monitor = get_active_monitor()
 end
 
 function pos = get_figure_position(monitor)
-    margin_x = max(20, round(monitor(3) * 0.04));
-    margin_y = max(30, round(monitor(4) * 0.07));
+    margin_x = max(18, round(monitor(3) * 0.025));
+    margin_y = max(36, round(monitor(4) * 0.06));
     usable_w = max(monitor(3) - 2 * margin_x, 420);
     usable_h = max(monitor(4) - 2 * margin_y, 320);
-    w = min(round(monitor(3) * 0.88), usable_w);
-    h = min(round(monitor(4) * 0.84), usable_h);
+    w = min(max(round(monitor(3) * 0.82), 980), usable_w);
+    h = min(max(round(monitor(4) * 0.78), 620), usable_h);
+    if usable_w < 980
+        w = usable_w;
+    end
+    if usable_h < 620
+        h = usable_h;
+    end
     x = monitor(1) + round((monitor(3) - w) / 2);
     y = monitor(2) + round((monitor(4) - h) / 2);
     pos = [x y w h];
