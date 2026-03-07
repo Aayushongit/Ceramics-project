@@ -319,7 +319,7 @@ function resize_layer_stacking_figure(fig, ~)
     inner_w = max(w - 2 * pad, 120);
     inner_h = max(h - 2 * pad, 120);
 
-    if w < 1180 || w / h < 1.45
+    if w < 900 || w / h < 1.15
         panel_h_max = max(floor((inner_h - gap) * 0.38), 90);
         panel_h = min(max(round(inner_h * 0.24), 110), panel_h_max);
         main_h = inner_h - panel_h - gap;
