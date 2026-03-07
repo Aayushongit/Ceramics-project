@@ -198,7 +198,7 @@ function draw_stacking_diagram(ax)
     end
 
     text(2, 0.3, 'Only half of tet. voids filled', 'FontSize', 9, 'Color', [0.8 0.8 0.3], ...
-         'HorizontalAlignment', 'center', 'FontStyle', 'italic');
+         'HorizontalAlignment', 'center', 'FontAngle', 'italic');
 
     axis off;
     xlim([-1 5]);
